@@ -11,7 +11,9 @@ object Wordle:
       println(s"You have $guessesRemaining guesses remaining")
       val guess = scala.io.StdIn.readLine("Guess the word: ").toUpperCase()
       guess match
-        case g if g == word => println("You guessed the word!"); return
+        case g if g == word =>
+          println("You guessed the word!")
+          return
         case g if g.length != word.length =>
           println("The word is not the right length")
         case _ =>
