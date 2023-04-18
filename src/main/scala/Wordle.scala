@@ -1,52 +1,38 @@
 package me.tjkuson.wordle
 
 import scala.annotation.tailrec
+import scala.io.StdIn.readLine
 
-@main def main(): Unit =
-  val initialNumberOfGuesses = 5
-  playGame(randomWord, initialNumberOfGuesses)
+@main def main(): Unit = playGame(randomWord, 5)
 
-@tailrec
-private def playGame(word: String, guessesRemaining: Int): Unit =
-  if guessesRemaining == 0 then println(s"You lose! The word was $word")
+@tailrec private def playGame(word: String, guesses: Int): Unit =
+  if guesses == 0 then println(s"You lose! The word was $word")
   else
-    println(s"Guesses remaining: $guessesRemaining")
-    val guess = scala.io.StdIn.readLine("Guess a word: ").toUpperCase
+    val guess = readLine(s"Guess a word ($guesses remaining): ").toUpperCase
     guess match
-      case `word` =>
-        println("You win!")
+      case `word` => println("Correct! You win.")
       case _ if guess.length != word.length =>
         println("Word length does not match")
-        playGame(word, guessesRemaining)
+        playGame(word, guesses)
       case _ =>
-        // Print the word where the user had the right letter in the right place, with the wrong letters as underscores
-        println(
-          word
-            .zip(guess)
-            .map((letter, guess) => if letter == guess then letter else '_')
-            .mkString
-        )
-        // Get list of letters that are in the wrong place but are in the word
-        val correctLettersNotInPlace = word
+        val correct = word.zip(guess).map((l, g) => if l == g then l else '_')
+        println(correct.mkString)
+        val misplaced = word
           .zip(guess)
-          .filter((letter, guess) => letter != guess && word.contains(guess))
-          .map((_, guess) => guess)
-        // Print the letters that are in the word but in the wrong place
-        if correctLettersNotInPlace.nonEmpty then
-          println(
-            s"Letters in the word but in the wrong place: ${correctLettersNotInPlace.mkString(", ")}"
-          )
-        playGame(word, guessesRemaining - 1)
+          .filter((l, g) => l != g && word.contains(g))
+          .map((_, g) => g)
+        if misplaced.nonEmpty then
+          println(s"Letters present but misplaced: ${misplaced.mkString(", ")}")
+        playGame(word, guesses - 1)
     end match
 end playGame
 
 private def randomWord: String =
-  val words = loadWordList.map(_.toUpperCase)
-  val randomIndex = scala.util.Random.nextInt(words.length)
-  words(randomIndex)
+  val words = wordList.map(_.toUpperCase)
+  words(scala.util.Random.nextInt(words.length))
 
-private def loadWordList: List[String] =
-  val source = scala.io.Source.getClass.getResourceAsStream("/words.txt")
-  val lines = scala.io.Source.fromInputStream(source).getLines.toList
-  source.close()
+private def wordList: List[String] =
+  val stream = scala.io.Source.getClass.getResourceAsStream("/words.txt")
+  val lines = scala.io.Source.fromInputStream(stream).getLines.toList
+  stream.close()
   lines
