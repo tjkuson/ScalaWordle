@@ -1,6 +1,12 @@
 # Wordle in Scala
 
-This is simple game of Wordle written in Scala 3 for the sake of learning.
+This is simple game of Wordle written in Scala 3.
+
+## Features
+
+- Recursively ask for a guess until the word is guessed, user quits, or the game is over
+- Check if the guess is in the word list
+- Print the result of the guess
 
 ## Licence
 
