@@ -2,6 +2,7 @@ package me.tjkuson.wordle
 
 import scala.io.StdIn.readLine
 import scala.util.Random
+
 object WordleUtils:
 
   def playerGuess(guesses: Int): String = readLine(
